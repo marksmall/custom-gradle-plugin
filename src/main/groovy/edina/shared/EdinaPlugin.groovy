@@ -24,6 +24,7 @@ class EdinaPlugin implements Plugin<Project> {
   
   private void addPlugins(Project project) {
     project.plugins.apply(WarPlugin)
+	project.sourceCompatibility = '1.8'
   }
   
   private void addRepositories(Project project) {
