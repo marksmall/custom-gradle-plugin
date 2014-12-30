@@ -2,7 +2,9 @@ package edina.shared.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.WarPlugin
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.MavenPlugin
 
 
 class EdinaPlugin implements Plugin<Project> {
@@ -23,8 +25,17 @@ class EdinaPlugin implements Plugin<Project> {
   }
   
   private void addPlugins(Project project) {
-    project.plugins.apply(WarPlugin)
+    project.plugins.apply(JavaPlugin)
 	project.sourceCompatibility = '1.8'
+	println "Java Compiler: ${project.sourceCompatibility}"
+
+    project.plugins.apply(MavenPlugin)
+
+	// TODO: Set dependency between maven install and Java test tasks.
+	def installTask = project.tasks.getByPath("install")
+	def testTask = project.tasks.getByPath("test")
+	println "Default Tasks: ${installTask}, ${testTask}"
+	installTask.dependsOn(testTask)
   }
   
   private void addRepositories(Project project) {
