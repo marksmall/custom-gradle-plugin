@@ -41,8 +41,9 @@ class EdinaPlugin implements Plugin<Project> {
   private void addRepositories(Project project) {
   	project.repositories {
       jcenter()
-	  mavenLocal()
-	  maven {
+      mavenLocal()
+      maven {
+        name 'geodev'
         url 'https://geodev.edina.ac.uk/maven-repository'
       }
     }
