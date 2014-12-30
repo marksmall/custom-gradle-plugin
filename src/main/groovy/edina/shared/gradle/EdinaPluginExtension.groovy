@@ -1,4 +1,4 @@
-package edina.shared
+package edina.shared.gradle
 
 class EdinaPluginExtension {
 

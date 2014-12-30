@@ -1,4 +1,4 @@
-package edina.shared
+package edina.shared.gradle
 
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
