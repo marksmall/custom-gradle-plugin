@@ -8,8 +8,8 @@ class EdinaPluginTest {
     
   @Test
   public void applyPluginToProject() {
-//    Project project = ProjectBuilder.builder().build()
-//    project.apply plugin: 'edina'
+    Project project = ProjectBuilder.builder().build()
+    project.apply plugin: 'edina'
 
 //    assertTrue(project.tasks.hello instanceof GreetingTask)
   }
