@@ -26,12 +26,12 @@ class EdinaPlugin implements Plugin<Project> {
   
   private void configureSourceSets(Project project) {
     project.sourceSets {
-      integrationTest {
+      integration {
         java {
-          srcDir 'src/test/integTest/java'
+          srcDir 'src/test/integration/java'
         }
         resources {
-          srcDir 'src/test/integTest/resources'
+          srcDir 'src/test/integration/resources'
         }
 
         compileClasspath = project.sourceSets.main.output + project.configurations.testRuntime
