@@ -31,8 +31,7 @@ class EdinaPluginTest {
 
   @Test
   public void isSourceCompatible() {
-    def result = project.sourceCompatibility == JavaVersion.VERSION_1_8
-    assertTrue(result)
+    assertTrue(project.sourceCompatibility == JavaVersion.VERSION_1_8)
   }
 
   @Test
