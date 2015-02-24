@@ -6,6 +6,8 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.plugins.quality.FindBugs
 
+import edina.shared.gradle.tasks.IntegrationTestTask
+
 
 class EdinaPlugin implements Plugin<Project> {
 
@@ -22,6 +24,16 @@ class EdinaPlugin implements Plugin<Project> {
     addDependencies(project)
     addProvidedScope(project)
     configureSourceSets(project)
+    addTasks(project)
+  }
+  
+  private void addTasks(Project project) {
+    project.task('integration', type: IntegrationTestTask)
+    
+    // Set dependency between integration and test tasks.
+    def childTask = project.tasks.getByPath("integration")
+    def parentTask = project.tasks.getByPath("test")
+    childTask.dependsOn(parentTask)
   }
   
   private void configureSourceSets(Project project) {
