@@ -88,6 +88,14 @@ class EdinaPlugin implements Plugin<Project> {
 
 	configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME).extendsFrom(provideCompileConfiguration)
     configurations.getByName(JavaPlugin.RUNTIME_CONFIGURATION_NAME).extendsFrom(provideRuntimeConfiguration)
+	
+//	project.configurations {
+//		provided
+//	}
+//	
+//	project.sourceSets {
+//		main { compileClasspath += configurations.provided }
+//	}
   }
 
 }

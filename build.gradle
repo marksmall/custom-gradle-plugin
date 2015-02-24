@@ -2,10 +2,17 @@ group='edina.shared'
 version='1.0-SNAPSHOT'
 description="""Edina specific plugin to set defaults for all projects."""
 
+repositories {
+  jcenter()
+  mavenLocal()
+}
+
 // Apply necessary plugins.
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'groovy'
+apply plugin: 'jacoco'
+apply plugin: 'pmd'
 
 dependencies {
   compile gradleApi()
@@ -14,3 +21,4 @@ dependencies {
 
 // Ensure maven install task is ran after java test task.
 install.dependsOn(test)
+
