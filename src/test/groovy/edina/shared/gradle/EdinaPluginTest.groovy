@@ -21,7 +21,7 @@ class EdinaPluginTest {
 
   @Test
   public void isMavenPluginApplied() {
-    assertNotNull(project.plugins.getPlugin('maven'))
+    assertNotNull(project.plugins.getPlugin('maven-publish'))
   }
 
   @Test

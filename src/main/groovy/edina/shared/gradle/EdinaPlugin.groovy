@@ -3,8 +3,9 @@ package edina.shared.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
-import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.plugins.quality.FindBugs
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 
 import edina.shared.gradle.tasks.IntegrationTestTask
 
@@ -62,13 +63,24 @@ class EdinaPlugin implements Plugin<Project> {
     project.sourceCompatibility = '1.8'
 //    println "Java Compiler: ${project.sourceCompatibility}"
 
-    project.plugins.apply(MavenPlugin)
+    project.plugins.apply(MavenPublishPlugin)
+    project.publishing {
+      publications {
+        mavenJava(MavenPublication) {
+          from project.components.java
+        }
+      }
+      repositories {
+        maven {
+          url 'https://geodev.edina.ac.uk/maven-repository'
+        }
+      }
+    }
 
     // Set dependency between maven install and Java test tasks.
-    def installTask = project.tasks.getByPath("install")
-    def testTask = project.tasks.getByPath("test")
-//    println "Default Tasks: ${installTask}, ${testTask}"
-    installTask.dependsOn(testTask)
+    def childTask = project.tasks.getByPath("publishToMavenLocal")
+    def parentTask = project.tasks.getByPath("test")
+    childTask.dependsOn(parentTask)
         
     // Add Code Coverage tools.
     project.plugins.apply('jacoco')
