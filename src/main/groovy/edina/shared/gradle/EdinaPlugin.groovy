@@ -2,9 +2,9 @@ package edina.shared.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.MavenPlugin
+import org.gradle.api.plugins.quality.FindBugs
 
 
 class EdinaPlugin implements Plugin<Project> {
@@ -13,33 +13,50 @@ class EdinaPlugin implements Plugin<Project> {
   static final String PROVIDED_COMPILE_CONFIGURATION_NAME = "compileProvided";
   static final String PROVIDED_RUNTIME_CONFIGURATION_NAME = "runtimeProvided";
 
-
+  @Override
   void apply(Project project) {
     project.extensions.create(EXTENSION_NAME, EdinaPluginExtension)
 
     addRepositories(project)
-	addPlugins(project)
+    configurePlugins(project)
     addDependencies(project)
     addTasks(project)
-	addProvidedScope(project)
+	  addProvidedScope(project)
   }
   
   private void addTasks(Project project) {
-	  
   }
   
-  private void addPlugins(Project project) {
+  /**
+   * Add and configure plugins for all Java based projects.
+   * 
+   * @param project
+   */
+  private void configurePlugins(Project project) {
     project.plugins.apply(JavaPlugin)
-	project.sourceCompatibility = '1.8'
-	println "Java Compiler: ${project.sourceCompatibility}"
+  	project.sourceCompatibility = '1.8'
+	  println "Java Compiler: ${project.sourceCompatibility}"
 
     project.plugins.apply(MavenPlugin)
 
-	// TODO: Set dependency between maven install and Java test tasks.
-	def installTask = project.tasks.getByPath("install")
-	def testTask = project.tasks.getByPath("test")
-	println "Default Tasks: ${installTask}, ${testTask}"
-	installTask.dependsOn(testTask)
+	  // Set dependency between maven install and Java test tasks.
+	  def installTask = project.tasks.getByPath("install")
+	  def testTask = project.tasks.getByPath("test")
+//	  println "Default Tasks: ${installTask}, ${testTask}"
+	  installTask.dependsOn(testTask)
+	
+    // Add Code Coverage tools.
+    project.plugins.apply('jacoco')
+    project.plugins.apply('checkstyle')
+    project.plugins.apply('pmd')
+    project.plugins.apply('jdepend')
+    project.plugins.apply('findbugs')
+    project.tasks.withType(FindBugs) {
+      reports {
+        xml.enabled = false
+        html.enabled = true
+      }
+    }
   }
   
   private void addRepositories(Project project) {
