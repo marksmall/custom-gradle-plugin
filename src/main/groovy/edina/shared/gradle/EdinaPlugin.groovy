@@ -20,11 +20,24 @@ class EdinaPlugin implements Plugin<Project> {
     addRepositories(project)
     configurePlugins(project)
     addDependencies(project)
-    addTasks(project)
-	  addProvidedScope(project)
+    addProvidedScope(project)
+    configureSourceSets(project)
   }
   
-  private void addTasks(Project project) {
+  private void configureSourceSets(Project project) {
+    project.sourceSets {
+      integrationTest {
+        java {
+          srcDir 'src/test/integTest/java'
+        }
+        resources {
+          srcDir 'src/test/integTest/resources'
+        }
+
+        compileClasspath = project.sourceSets.main.output + project.configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
+      }
+    }
   }
   
   /**
@@ -34,17 +47,17 @@ class EdinaPlugin implements Plugin<Project> {
    */
   private void configurePlugins(Project project) {
     project.plugins.apply(JavaPlugin)
-  	project.sourceCompatibility = '1.8'
-	  println "Java Compiler: ${project.sourceCompatibility}"
+    project.sourceCompatibility = '1.8'
+//    println "Java Compiler: ${project.sourceCompatibility}"
 
     project.plugins.apply(MavenPlugin)
 
-	  // Set dependency between maven install and Java test tasks.
-	  def installTask = project.tasks.getByPath("install")
-	  def testTask = project.tasks.getByPath("test")
-//	  println "Default Tasks: ${installTask}, ${testTask}"
-	  installTask.dependsOn(testTask)
-	
+    // Set dependency between maven install and Java test tasks.
+    def installTask = project.tasks.getByPath("install")
+    def testTask = project.tasks.getByPath("test")
+//    println "Default Tasks: ${installTask}, ${testTask}"
+    installTask.dependsOn(testTask)
+        
     // Add Code Coverage tools.
     project.plugins.apply('jacoco')
     project.plugins.apply('checkstyle')
@@ -60,7 +73,7 @@ class EdinaPlugin implements Plugin<Project> {
   }
   
   private void addRepositories(Project project) {
-  	project.repositories {
+    project.repositories {
       jcenter()
       mavenLocal()
       maven {
@@ -78,24 +91,24 @@ class EdinaPlugin implements Plugin<Project> {
   }
   
   private void addProvidedScope(Project project) {
-	def configurations = project.configurations
+    def configurations = project.configurations
 
-	def provideCompileConfiguration = configurations.create(PROVIDED_COMPILE_CONFIGURATION_NAME).setVisible(false)
+    def provideCompileConfiguration = configurations.create(PROVIDED_COMPILE_CONFIGURATION_NAME).setVisible(false)
     provideCompileConfiguration.setDescription("Additional compile classpath for libraries that should not be part of the WAR archive.")
 
-	def provideRuntimeConfiguration = configurations.create(PROVIDED_RUNTIME_CONFIGURATION_NAME).setVisible(false) //.extendsFrom(provideCompileConfiguration)
+    def provideRuntimeConfiguration = configurations.create(PROVIDED_RUNTIME_CONFIGURATION_NAME).setVisible(false) //.extendsFrom(provideCompileConfiguration)
     provideRuntimeConfiguration.setDescription("Additional runtime classpath for libraries that should not be part of the WAR archive.")
 
-	configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME).extendsFrom(provideCompileConfiguration)
+    configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME).extendsFrom(provideCompileConfiguration)
     configurations.getByName(JavaPlugin.RUNTIME_CONFIGURATION_NAME).extendsFrom(provideRuntimeConfiguration)
-	
-//	project.configurations {
-//		provided
-//	}
-//	
-//	project.sourceSets {
-//		main { compileClasspath += configurations.provided }
-//	}
+        
+//      project.configurations {
+//              provided
+//      }
+//      
+//      project.sourceSets {
+//              main { compileClasspath += configurations.provided }
+//      }
   }
 
 }
