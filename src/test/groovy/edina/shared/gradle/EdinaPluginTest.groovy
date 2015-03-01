@@ -7,6 +7,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 class EdinaPluginTest {
@@ -21,7 +22,7 @@ class EdinaPluginTest {
 
   @Test
   public void isMavenPluginApplied() {
-    assertNotNull(project.plugins.getPlugin('maven-publish'))
+    assertNotNull(project.plugins.getPlugin('maven'))
   }
 
   @Test

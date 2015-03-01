@@ -3,9 +3,8 @@ package edina.shared.gradle
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.plugins.quality.FindBugs
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 
 import edina.shared.gradle.tasks.IntegrationTestTask
 
@@ -20,6 +19,10 @@ class EdinaPlugin implements Plugin<Project> {
   void apply(Project project) {
     project.extensions.create(EXTENSION_NAME, EdinaPluginExtension)
 
+    project.configurations {
+      deployerJars
+    }
+    
     addRepositories(project)
     configurePlugins(project)
     addDependencies(project)
@@ -61,27 +64,24 @@ class EdinaPlugin implements Plugin<Project> {
   private void configurePlugins(Project project) {
     project.plugins.apply(JavaPlugin)
     project.sourceCompatibility = '1.8'
-//    println "Java Compiler: ${project.sourceCompatibility}"
 
-    project.plugins.apply(MavenPublishPlugin)
-    project.publishing {
-      publications {
-        mavenJava(MavenPublication) {
-          from project.components.java
-        }
-      }
-      repositories {
-        maven {
-          url 'https://geodev.edina.ac.uk/maven-repository'
+    
+    project.plugins.apply(MavenPlugin)
+    project.uploadArchives {
+      repositories.mavenDeployer {
+        configuration = project.configurations.deployerJars
+        repository(url: project.properties['edinaRepository']) {
+          authentication(userName: project.properties['mavenUsername'], password: project.properties['mavenPassword'])
         }
       }
     }
-
-    // Set dependency between maven install and Java test tasks.
-    def childTask = project.tasks.getByPath("publishToMavenLocal")
+    // Set dependency between install and test tasks.
+    def installTask = project.tasks.getByPath("install")
+    def deployTask = project.tasks.getByPath("uploadArchives")
     def parentTask = project.tasks.getByPath("test")
-    childTask.dependsOn(parentTask)
-        
+    installTask.dependsOn(parentTask)
+    deployTask.dependsOn(parentTask)
+    
     // Add Code Coverage tools.
     project.plugins.apply('jacoco')
     project.plugins.apply('checkstyle')
@@ -111,6 +111,7 @@ class EdinaPlugin implements Plugin<Project> {
     project.dependencies {
       compile 'org.slf4j:slf4j-api:1.7.9'
       testCompile 'junit:junit:4.11'
+      deployerJars 'org.apache.maven.wagon:wagon-ssh:2.2'
     }
   }
   
@@ -125,14 +126,6 @@ class EdinaPlugin implements Plugin<Project> {
 
     configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME).extendsFrom(provideCompileConfiguration)
     configurations.getByName(JavaPlugin.RUNTIME_CONFIGURATION_NAME).extendsFrom(provideRuntimeConfiguration)
-        
-//      project.configurations {
-//              provided
-//      }
-//      
-//      project.sourceSets {
-//              main { compileClasspath += configurations.provided }
-//      }
   }
 
 }

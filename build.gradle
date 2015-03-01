@@ -2,6 +2,10 @@ group='edina.shared'
 version='1.0-SNAPSHOT'
 description="""Edina specific plugin to set defaults for all projects."""
 
+configurations {
+    deployerJars
+}
+
 repositories {
   jcenter()
   mavenLocal()
@@ -10,28 +14,27 @@ repositories {
 // Apply necessary plugins.
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 apply plugin: 'jacoco'
 apply plugin: 'pmd'
 
 dependencies {
   compile gradleApi()
   compile localGroovy()
+  
+  deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
 }
 
-publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      from components.java
-    }
-  }
-  repositories {
-    maven {
-      url 'https://geodev.edina.ac.uk/maven-repository'
-    }
+uploadArchives {
+  repositories.mavenDeployer {
+      configuration = configurations.deployerJars
+      repository(url: edinaRepository) {
+          authentication(userName: mavenUsername, password: mavenPassword)
+      }
   }
 }
 
 // Ensure maven publish task is ran after java test task.
-publishToMavenLocal.dependsOn(test)
+uploadArchives.dependsOn(test)
+install.dependsOn(test)
 
