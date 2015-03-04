@@ -1,6 +1,16 @@
+plugins {
+  id 'net.researchgate.release' version '2.0.2'
+}
+
+release {
+  // Prevent releases from master branch only.
+  // This can be configured to specify releases from a particular branch only.
+  requireBranch = ''
+}
+
 group='edina.shared'
-version='1.0-SNAPSHOT'
 description="""Edina specific plugin to set defaults for all projects."""
+
 
 configurations {
     deployerJars
@@ -10,6 +20,8 @@ repositories {
   jcenter()
   mavenLocal()
 }
+
+
 
 // Apply necessary plugins.
 apply plugin: 'java'
