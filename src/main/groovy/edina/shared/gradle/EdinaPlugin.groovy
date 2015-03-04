@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.MavenPlugin
+import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.quality.FindBugs
 
 import edina.shared.gradle.tasks.IntegrationTestTask
@@ -63,6 +64,11 @@ class EdinaPlugin implements Plugin<Project> {
    */
   private void configurePlugins(Project project) {
     project.plugins.apply(JavaPlugin)
+    if (project.properties['type'] == 'war') {
+      println('Applying WAR plugin')
+      project.plugins.apply(WarPlugin)
+    }
+    
     project.sourceCompatibility = '1.8'
 
     
