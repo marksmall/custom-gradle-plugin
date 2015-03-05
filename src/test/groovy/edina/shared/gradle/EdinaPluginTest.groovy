@@ -17,6 +17,7 @@ class EdinaPluginTest {
   @Before
   public void setup() {
     project = ProjectBuilder.builder().build()
+    project.apply plugin: 'java'
     project.apply plugin: 'edina'
   }
 
@@ -24,20 +25,85 @@ class EdinaPluginTest {
   public void isMavenPluginApplied() {
     assertNotNull(project.plugins.getPlugin('maven'))
   }
-
+  
   @Test
-  public void isJavaPluginApplied() {
-    assertNotNull(project.plugins.getPlugin('java'))
+  public void isJaCoCoPluginApplied() {
+    assertNotNull(project.plugins.getPlugin('jacoco'))
+  }
+  
+  @Test
+  public void isCheckstylePluginApplied() {
+    assertNotNull(project.plugins.getPlugin('checkstyle'))
+  }
+  
+  @Test
+  public void isPmdPluginApplied() {
+    assertNotNull(project.plugins.getPlugin('pmd'))
+  }
+  
+  @Test
+  public void isJDependPluginApplied() {
+    assertNotNull(project.plugins.getPlugin('jdepend'))
+  }
+  
+  @Test
+  public void isFindBugsPluginApplied() {
+    assertNotNull(project.plugins.getPlugin('findbugs'))
   }
 
   @Test
   public void isSourceCompatible() {
-    assertTrue(project.sourceCompatibility == JavaVersion.VERSION_1_8)
+    println 'Source: ' + project.sourceCompatibility
+    assertTrue(project.sourceCompatibility == JavaVersion.VERSION_1_7)
   }
 
   @Test
   public void hasGeodevRepository() {
     assertNotNull(project.repositories.getByName('geodev'))
+  }
+
+  @Test
+  public void hasProvidedCompileScope() {
+    println 'Scope: ' + project.configurations.getByName(EdinaPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME)
+    assertNotNull(project.configurations.getByName(EdinaPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME))
+  }
+
+  @Test
+  public void hasProvidedRuntimeScope() {
+    println 'Scope: ' + project.configurations.getByName(EdinaPlugin.PROVIDED_RUNTIME_CONFIGURATION_NAME)
+    assertNotNull(project.configurations.getByName(EdinaPlugin.PROVIDED_RUNTIME_CONFIGURATION_NAME))
+  }
+
+  @Test
+  public void hasIntegrationSourceSet() {
+    println 'SourceSet: ' + project.sourceSets.integration
+    assertNotNull(project.sourceSets.integration)
+  }
+
+  @Test
+  public void isIntegrationTaskDependentOnTest() {
+//    println 'Tasks: ' + project.tasks.getByName('integration').dependsOn
+    assertTrue(project.tasks.getByName('integration').dependsOn.contains(project.tasks.getByName('test')))
+  }
+
+  @Test
+  public void isInstallTaskDependentOnTest() {
+//    println 'Tasks: ' + project.tasks.getByName('install').dependsOn
+    assertTrue(project.tasks.getByName('install').dependsOn.contains(project.tasks.getByName('test')))
+  }
+
+  @Test
+  public void isUploadArchivesTaskDependentOnTest() {
+//    println 'Tasks: ' + project.tasks.getByName('integration').dependsOn
+    assertTrue(project.tasks.getByName('uploadArchives').dependsOn.contains(project.tasks.getByName('test')))
+  }
+
+  @Ignore
+  public void hasSlf4jDependency() {
+    // TODO: How do we get a list of dependencies.
+    println 'Dependency: ' + project.dependencies.modules
+    println 'Component: ' + project.dependencies.components
+    println 'Config: ' + project.configurations['compile'].name
   }
 
 }
