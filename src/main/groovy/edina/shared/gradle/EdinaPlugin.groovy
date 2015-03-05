@@ -1,10 +1,10 @@
 package edina.shared.gradle
 
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.MavenPlugin
-import org.gradle.api.plugins.WarPlugin
 import org.gradle.api.plugins.quality.FindBugs
 
 import edina.shared.gradle.tasks.IntegrationTestTask
@@ -27,18 +27,23 @@ class EdinaPlugin implements Plugin<Project> {
     addRepositories(project)
     configurePlugins(project)
     addDependencies(project)
-    addProvidedScope(project)
     configureSourceSets(project)
-    addTasks(project)
+    configureTasks(project)
   }
   
-  private void addTasks(Project project) {
+  private void configureTasks(Project project) {
     project.task('integration', type: IntegrationTestTask)
     
     // Set dependency between integration and test tasks.
-    def childTask = project.tasks.getByPath("integration")
-    def parentTask = project.tasks.getByPath("test")
-    childTask.dependsOn(parentTask)
+    def integrationTask = project.tasks.getByPath("integration")
+    def testTask = project.tasks.getByPath("test")
+    integrationTask.dependsOn(testTask)
+
+    // Set dependency between install, uploadArchives and test tasks.
+    def installTask = project.tasks.getByPath("install")
+    def deployTask = project.tasks.getByPath("uploadArchives")
+    installTask.dependsOn(testTask)
+    deployTask.dependsOn(testTask)
   }
   
   private void configureSourceSets(Project project) {
@@ -63,15 +68,17 @@ class EdinaPlugin implements Plugin<Project> {
    * @param project
    */
   private void configurePlugins(Project project) {
-    project.plugins.apply(JavaPlugin)
-    if (project.properties['type'] == 'war') {
-      println('Applying WAR plugin')
-      project.plugins.apply(WarPlugin)
-    }
-    
-    project.sourceCompatibility = '1.8'
+    project.sourceCompatibility = JavaVersion.VERSION_1_7
 
-    
+    project.plugins.withId('java') {
+      // configure all java projects
+      addProvidedScope(project)
+    }
+
+    project.plugins.withId('war') {
+      // additional configuration for war projects
+    }
+
     project.plugins.apply(MavenPlugin)
     project.uploadArchives {
       repositories.mavenDeployer {
@@ -81,12 +88,6 @@ class EdinaPlugin implements Plugin<Project> {
         }
       }
     }
-    // Set dependency between install and test tasks.
-    def installTask = project.tasks.getByPath("install")
-    def deployTask = project.tasks.getByPath("uploadArchives")
-    def parentTask = project.tasks.getByPath("test")
-    installTask.dependsOn(parentTask)
-    deployTask.dependsOn(parentTask)
     
     // Add Code Coverage tools.
     project.plugins.apply('jacoco')
