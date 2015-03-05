@@ -38,3 +38,8 @@ uploadArchives {
 uploadArchives.dependsOn(test)
 install.dependsOn(test)
 
+
+// Uncomment to enable println statements in tests.
+//test {
+//  testLogging.showStandardStreams = true
+//}
