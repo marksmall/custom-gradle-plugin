@@ -6,6 +6,8 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.plugins.quality.FindBugs
+import org.gradle.logging.StyledTextOutputFactory
+import org.gradle.logging.StyledTextOutput.Style
 
 import edina.shared.gradle.tasks.IntegrationTestTask
 
@@ -44,6 +46,31 @@ class EdinaPlugin implements Plugin<Project> {
     def deployTask = project.tasks.getByPath("uploadArchives")
     installTask.dependsOn(testTask)
     deployTask.dependsOn(testTask)
+
+    // Configure styled test output, tests have 3 status'
+    // * GREEN  - PASSED
+    // * YELLOW - SKIPPED
+    // * RED    - FAILED
+    System.setProperty("org.gradle.color.failure", "RED")
+    System.setProperty("org.gradle.color.progressstatus", "YELLOW")
+    System.setProperty("org.gradle.color.success", "GREEN")
+    project.tasks.getByName("test") {
+      def out = services.get(StyledTextOutputFactory).create("colored-test-output")
+      out.style(Style.Normal)
+
+      beforeSuite { suite ->
+        if (suite.name.startsWith("Test Run") || suite.name.startsWith("Gradle Worker")) return
+        out.println("\n" + suite.name)
+      }
+      afterTest { descriptor, result ->
+        def style
+        if (result.failedTestCount > 0) style = Style.Failure
+        else if (result.skippedTestCount > 0) style = Style.ProgressStatus
+        else style = Style.Success
+
+        out.text('  ').withStyle(style).println(descriptor.name)
+      }
+    }
   }
   
   private void configureSourceSets(Project project) {
