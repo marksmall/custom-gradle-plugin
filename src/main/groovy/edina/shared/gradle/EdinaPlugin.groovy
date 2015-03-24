@@ -149,6 +149,15 @@ class EdinaPlugin implements Plugin<Project> {
         out.text('  ').withStyle(style).println(descriptor.name)
       }
     }
+    
+    project.uploadArchives {
+      repositories.mavenDeployer {
+        configuration = project.configurations.deployerJars
+        repository(url: project.properties['edinaRepository']) {
+          authentication(userName: project.properties['mavenUsername'], password: project.properties['mavenPassword'])
+        }
+      }
+    }
   }
   
 }
