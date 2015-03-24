@@ -3,12 +3,15 @@ package edina.shared.gradle
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.quality.FindBugs
 
 
 class EdinaPlugin implements Plugin<Project> {
 
   static final String EXTENSION_NAME = 'edinaArgs'
+  static final String PROVIDED_COMPILE_CONFIGURATION_NAME = "compileProvided";
+  static final String PROVIDED_RUNTIME_CONFIGURATION_NAME = "runtimeProvided";
 
   @Override
   void apply(Project project) {
@@ -18,6 +21,7 @@ class EdinaPlugin implements Plugin<Project> {
     configurePlugins(project)
     configureSourceSets(project)
     configureDependencies(project)
+    addProvidedScope(project)
   }
   
   private void configureRepositories(Project project) {
@@ -89,4 +93,17 @@ class EdinaPlugin implements Plugin<Project> {
     }
   }
   
+  private void addProvidedScope(Project project) {
+    def configurations = project.configurations
+
+    def provideCompileConfiguration = configurations.create(PROVIDED_COMPILE_CONFIGURATION_NAME).setVisible(false)
+    provideCompileConfiguration.setDescription("Additional compile classpath for libraries that should not be part of the WAR archive.")
+
+    def provideRuntimeConfiguration = configurations.create(PROVIDED_RUNTIME_CONFIGURATION_NAME).setVisible(false) //.extendsFrom(provideCompileConfiguration)
+    provideRuntimeConfiguration.setDescription("Additional runtime classpath for libraries that should not be part of the WAR archive.")
+
+    configurations.getByName(JavaPlugin.COMPILE_CONFIGURATION_NAME).extendsFrom(provideCompileConfiguration)
+    configurations.getByName(JavaPlugin.RUNTIME_CONFIGURATION_NAME).extendsFrom(provideRuntimeConfiguration)
+  }
+
 }

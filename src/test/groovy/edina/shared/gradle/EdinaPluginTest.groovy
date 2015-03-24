@@ -62,13 +62,13 @@ class EdinaPluginTest {
     assertNotNull(project.repositories.getByName('geodev'))
   }
 
-  @Ignore
+  @Test
   public void hasProvidedCompileScope() {
     println 'Scope: ' + project.configurations.getByName(EdinaPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME)
     assertNotNull(project.configurations.getByName(EdinaPlugin.PROVIDED_COMPILE_CONFIGURATION_NAME))
   }
 
-  @Ignore
+  @Test
   public void hasProvidedRuntimeScope() {
     println 'Scope: ' + project.configurations.getByName(EdinaPlugin.PROVIDED_RUNTIME_CONFIGURATION_NAME)
     assertNotNull(project.configurations.getByName(EdinaPlugin.PROVIDED_RUNTIME_CONFIGURATION_NAME))
