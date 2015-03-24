@@ -21,32 +21,32 @@ class EdinaPluginTest {
     project.apply plugin: 'edina'
   }
 
-  @Ignore
+  @Test
   public void isMavenPluginApplied() {
     assertNotNull(project.plugins.getPlugin('maven'))
   }
   
-  @Ignore
+  @Test
   public void isJaCoCoPluginApplied() {
     assertNotNull(project.plugins.getPlugin('jacoco'))
   }
   
-  @Ignore
+  @Test
   public void isCheckstylePluginApplied() {
     assertNotNull(project.plugins.getPlugin('checkstyle'))
   }
   
-  @Ignore
+  @Test
   public void isPmdPluginApplied() {
     assertNotNull(project.plugins.getPlugin('pmd'))
   }
   
-  @Ignore
+  @Test
   public void isJDependPluginApplied() {
     assertNotNull(project.plugins.getPlugin('jdepend'))
   }
   
-  @Ignore
+  @Test
   public void isFindBugsPluginApplied() {
     assertNotNull(project.plugins.getPlugin('findbugs'))
   }
