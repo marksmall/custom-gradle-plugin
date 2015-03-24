@@ -80,19 +80,19 @@ class EdinaPluginTest {
     assertNotNull(project.sourceSets.integration)
   }
 
-  @Ignore
+  @Test
   public void isIntegrationTaskDependentOnTest() {
 //    println 'Tasks: ' + project.tasks.getByName('integration').dependsOn
     assertTrue(project.tasks.getByName('integration').dependsOn.contains(project.tasks.getByName('test')))
   }
 
-  @Ignore
+  @Test
   public void isInstallTaskDependentOnTest() {
 //    println 'Tasks: ' + project.tasks.getByName('install').dependsOn
     assertTrue(project.tasks.getByName('install').dependsOn.contains(project.tasks.getByName('test')))
   }
 
-  @Ignore
+  @Test
   public void isUploadArchivesTaskDependentOnTest() {
 //    println 'Tasks: ' + project.tasks.getByName('integration').dependsOn
     assertTrue(project.tasks.getByName('uploadArchives').dependsOn.contains(project.tasks.getByName('test')))
