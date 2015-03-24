@@ -25,7 +25,6 @@ class EdinaPlugin implements Plugin<Project> {
     configurePlugins(project)
     configureSourceSets(project)
     configureDependencies(project)
-    addProvidedScope(project)
     configureTasks(project)
   }
   
@@ -63,6 +62,16 @@ class EdinaPlugin implements Plugin<Project> {
         html.enabled = true
       }
     }
+
+    project.plugins.withId('java') {
+      // configure all java projects
+      addProvidedScope(project)
+    }
+
+    project.plugins.withId('war') {
+      // additional configuration for war projects
+    }
+
   }
   
   /**
