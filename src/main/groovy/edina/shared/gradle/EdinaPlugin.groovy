@@ -15,6 +15,7 @@ class EdinaPlugin implements Plugin<Project> {
     project.extensions.create(EXTENSION_NAME, EdinaPluginExtension)
     
     configurePlugins(project)
+    configureSourceSets(project)
   }
   
   /**
@@ -38,6 +39,27 @@ class EdinaPlugin implements Plugin<Project> {
       reports {
         xml.enabled = false
         html.enabled = true
+      }
+    }
+  }
+  
+  /**
+   * Add extra sourcesets common to any project.
+   * 
+   * @param project
+   */
+  private void configureSourceSets(Project project) {
+    project.sourceSets {
+      integration {
+        java {
+          srcDir 'src/test/integration/java'
+        }
+        resources {
+          srcDir 'src/test/integration/resources'
+        }
+
+        compileClasspath = project.sourceSets.main.output + project.configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
       }
     }
   }

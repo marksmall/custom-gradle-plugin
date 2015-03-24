@@ -74,7 +74,7 @@ class EdinaPluginTest {
     assertNotNull(project.configurations.getByName(EdinaPlugin.PROVIDED_RUNTIME_CONFIGURATION_NAME))
   }
 
-  @Ignore
+  @Test
   public void hasIntegrationSourceSet() {
     println 'SourceSet: ' + project.sourceSets.integration
     assertNotNull(project.sourceSets.integration)
