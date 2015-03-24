@@ -8,6 +8,7 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Ignore
+import org.junit.Test
 
 class EdinaPluginTest {
 	
@@ -50,7 +51,7 @@ class EdinaPluginTest {
     assertNotNull(project.plugins.getPlugin('findbugs'))
   }
 
-  @Ignore
+  @Test
   public void isSourceCompatible() {
     println 'Source: ' + project.sourceCompatibility
     assertTrue(project.sourceCompatibility == JavaVersion.VERSION_1_7)
