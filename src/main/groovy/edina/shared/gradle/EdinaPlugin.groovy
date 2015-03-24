@@ -13,9 +13,21 @@ class EdinaPlugin implements Plugin<Project> {
   @Override
   void apply(Project project) {
     project.extensions.create(EXTENSION_NAME, EdinaPluginExtension)
-    
+   
+    configureRepositories(project) 
     configurePlugins(project)
     configureSourceSets(project)
+  }
+  
+  private void configureRepositories(Project project) {
+    project.repositories {
+      jcenter()
+      mavenLocal()
+      maven {
+        name 'geodev'
+        url 'https://geodev.edina.ac.uk/maven-repository'
+      }
+    }
   }
   
   /**

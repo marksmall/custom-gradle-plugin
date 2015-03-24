@@ -57,7 +57,7 @@ class EdinaPluginTest {
     assertTrue(project.sourceCompatibility == JavaVersion.VERSION_1_7)
   }
 
-  @Ignore
+  @Test
   public void hasGeodevRepository() {
     assertNotNull(project.repositories.getByName('geodev'))
   }
