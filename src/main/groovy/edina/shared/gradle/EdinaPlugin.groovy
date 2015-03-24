@@ -17,6 +17,7 @@ class EdinaPlugin implements Plugin<Project> {
     configureRepositories(project) 
     configurePlugins(project)
     configureSourceSets(project)
+    configureDependencies(project)
   }
   
   private void configureRepositories(Project project) {
@@ -73,6 +74,18 @@ class EdinaPlugin implements Plugin<Project> {
         compileClasspath = project.sourceSets.main.output + project.configurations.testRuntime
         runtimeClasspath = output + compileClasspath
       }
+    }
+  }
+  
+  private void configureDependencies(Project project) {
+    project.configurations {
+      deployerJars
+    }
+    
+    project.dependencies {
+      compile 'org.slf4j:slf4j-api:1.7.9'
+      testCompile 'junit:junit:4.11'
+      deployerJars 'org.apache.maven.wagon:wagon-ssh:2.2'
     }
   }
   
