@@ -19,6 +19,17 @@ class EdinaPlugin implements Plugin<Project> {
 
   @Override
   void apply(Project project) {
+    project.buildscript {
+      repositories {
+        jcenter()
+      }
+      dependencies {
+        classpath 'net.researchgate:gradle-release:2.0.2'
+      } 
+    }
+    
+    project.apply(plugin: 'net.researchgate.release')
+    
     project.extensions.create(EXTENSION_NAME, EdinaPluginExtension)
    
     configureRepositories(project) 
@@ -46,7 +57,7 @@ class EdinaPlugin implements Plugin<Project> {
    */
   private void configurePlugins(Project project) {
     project.sourceCompatibility = JavaVersion.VERSION_1_7
-    
+
     // Apply and configure common plugins.
     project.configure(project) {
       apply plugin: 'jacoco'
@@ -56,6 +67,7 @@ class EdinaPlugin implements Plugin<Project> {
       apply plugin: 'checkstyle'
       apply plugin: 'maven'
     }
+
     project.tasks.withType(FindBugs) {
       reports {
         xml.enabled = false
