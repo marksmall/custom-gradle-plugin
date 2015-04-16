@@ -33,9 +33,9 @@ class EdinaPlugin implements Plugin<Project> {
     project.extensions.create(EXTENSION_NAME, EdinaPluginExtension)
    
     configureRepositories(project) 
+    configureDependencies(project)
     configurePlugins(project)
     configureSourceSets(project)
-    configureDependencies(project)
     configureTasks(project)
   }
   
@@ -114,6 +114,7 @@ class EdinaPlugin implements Plugin<Project> {
     
     project.dependencies {
       compile 'org.slf4j:slf4j-api:1.7.9'
+      compile 'net.researchgate:gradle-release:2.0.2'
       testCompile 'junit:junit:4.11'
       deployerJars 'org.apache.maven.wagon:wagon-ssh:2.2'
     }

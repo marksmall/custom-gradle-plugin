@@ -1,15 +1,15 @@
-buildscript {
-  repositories {
-    jcenter()
-  }
-  dependencies {
-    classpath 'net.researchgate:gradle-release:2.0.2'
-  }
-}
-
-// plugins {
-//   id 'net.researchgate.release' version '2.0.2'
+// buildscript {
+//   repositories {
+//     jcenter()
+//   }
+//   dependencies {
+//     classpath 'net.researchgate:gradle-release:2.0.2'
+//   }
 // }
+
+plugins {
+  id 'net.researchgate.release' version '2.0.2'
+}
 
 group='edina.shared'
 description="""Edina specific plugin to set defaults for all projects."""
@@ -37,7 +37,8 @@ apply plugin: 'net.researchgate.release'
 dependencies {
   compile gradleApi()
   compile localGroovy()
-  
+  compile 'net.researchgate:gradle-release:2.0.2'
+
   deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
 }
 
