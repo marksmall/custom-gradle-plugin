@@ -19,23 +19,12 @@ class EdinaPlugin implements Plugin<Project> {
 
   @Override
   void apply(Project project) {
-    project.buildscript {
-      repositories {
-        jcenter()
-      }
-      dependencies {
-        classpath 'net.researchgate:gradle-release:2.0.2'
-      } 
-    }
-    
-    project.apply(plugin: 'net.researchgate.release')
-    
     project.extensions.create(EXTENSION_NAME, EdinaPluginExtension)
    
     configureRepositories(project) 
+    configureDependencies(project)
     configurePlugins(project)
     configureSourceSets(project)
-    configureDependencies(project)
     configureTasks(project)
   }
   
@@ -73,6 +62,17 @@ class EdinaPlugin implements Plugin<Project> {
         xml.enabled = false
         html.enabled = true
       }
+    }
+
+    // HACK: This is to get the plugin working, it expects a .git directory
+    //       under /tmp directory during testing.
+    project.file(".git").mkdirs()
+    // Apply release plugin.
+    project.apply(plugin: 'net.researchgate.release')
+    project.plugins.withId('release') {
+      // Prevent releases from master branch only.
+      // This can be configured to specify releases from a particular branch only.
+      requireBranch = ''
     }
 
     project.plugins.withId('java') {
@@ -145,6 +145,11 @@ class EdinaPlugin implements Plugin<Project> {
     def deployTask = project.tasks.getByPath("uploadArchives")
     installTask.dependsOn(testTask)
     deployTask.dependsOn(testTask)
+
+    // Set dependency between install, uploadArchives and test tasks.
+    def releaseTask = project.tasks.getByPath("createReleaseTag")
+    // The deploy task has already been created.
+    releaseTask.dependsOn(deployTask)
 
     // Configure styled test output, tests have 3 status'
     // * GREEN  - PASSED
